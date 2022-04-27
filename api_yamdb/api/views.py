@@ -1,5 +1,6 @@
 from django.core.mail import EmailMessage
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, status, viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -7,9 +8,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import User
+from reviews.models import Category, Genre, Title, User
 from .permissions import AdminOnly
+from .mixins import ListCreateDestroyViewSet
+from .filters import TitlesFilter
 from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleSerializer,
     GetTokenSerializer,
     NotAdminSerializer,
     SignUpSerializer,
@@ -114,3 +120,26 @@ class APISignup(APIView):
         }
         self.send_email(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
+
+
+class GenreViewSet(ListCreateDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+    lookup_field = "slug"
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all().order_by("name")
+    serializer_class = TitleSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TitlesFilter
