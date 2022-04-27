@@ -1,6 +1,7 @@
 from django.core.mail import EmailMessage
-from rest_framework import permissions, status, viewsets, filters
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, status, viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -8,16 +9,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Category, Genre, Title, User
+from reviews.models import Category, Comment, Genre, Review, Title, User
 from .permissions import AdminOnly
 from .mixins import ListCreateDestroyViewSet
 from .filters import TitlesFilter
 from .serializers import (
     CategorySerializer,
+    CommentSerializer,
     GenreSerializer,
     TitleSerializer,
     GetTokenSerializer,
     NotAdminSerializer,
+    ReviewSerializer,
     SignUpSerializer,
     UsersSerializer
 )
@@ -143,3 +146,39 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitlesFilter
+
+
+class CommentViewset(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        review_id = int(self.kwargs.get('review_id'))
+        review = get_object_or_404(Review, pk=review_id)
+        return review.comments
+
+#    def get_permissions(self):
+        # предусмотреть пермишены для модератора, если self.action == retrieve
+
+    def preform_create(self, serializer):
+        review_id = int(self.kwargs.get('review_id'))
+        review = get_object_or_404(Review, pk=review_id)
+        user = self.request.user
+        serializer.save(author=user, review=review)
+
+
+class ReviewViewset(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        title_id = int(self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=title_id)
+        return title.reviews
+
+#    def get_permissions(self):
+        # предусмотреть пермишены для модератора, если self.action == retrieve
+
+    def perform_create(self, serializer):
+        title_id = int(self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=title_id)
+        user = self.request.user
+        serializer.save(author=user, title=title)
