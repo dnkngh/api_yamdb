@@ -17,12 +17,11 @@ from .serializers import (
     CategorySerializer,
     CommentSerializer,
     GenreSerializer,
-    TitleSerializer,
     GetTokenSerializer,
     NotAdminSerializer,
     ReviewSerializer,
     SignUpSerializer,
-    UsersSerializer
+    UsersSerializer, TitleReadSerializer, TitleWriteSerializer
 )
 
 
@@ -145,10 +144,14 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by("name")
-    serializer_class = TitleSerializer
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitlesFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
 
 
 class CommentViewset(viewsets.ModelViewSet):
@@ -169,7 +172,6 @@ class CommentViewset(viewsets.ModelViewSet):
 
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminUserOrReadOnly,)
 
     def get_queryset(self):
         title_id = int(self.kwargs.get('title_id'))
