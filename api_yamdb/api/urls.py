@@ -22,7 +22,7 @@ router.register(r'titles', TitleViewSet)
 router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewset,
-    basename='comment'
+    basename='comments'
 )
 router.register(
     r'titles/(?P<title_id>\d+)/reviews',
