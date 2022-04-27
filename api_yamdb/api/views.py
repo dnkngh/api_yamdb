@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import Category, Comment, Genre, Review, Title, User
-from .permissions import AdminOnly
+from reviews.models import Category, Comment, Genre, Review, Title, User # noqa
+from .permissions import AdminOnly, IsAdminUserOrReadOnly
 from .mixins import ListCreateDestroyViewSet
 from .filters import TitlesFilter
 from .serializers import (
@@ -128,6 +128,7 @@ class APISignup(APIView):
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
@@ -136,6 +137,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
     lookup_field = "slug"
@@ -144,20 +146,19 @@ class GenreViewSet(ListCreateDestroyViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().order_by("name")
     serializer_class = TitleSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitlesFilter
 
 
 class CommentViewset(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     def get_queryset(self):
         review_id = int(self.kwargs.get('review_id'))
         review = get_object_or_404(Review, pk=review_id)
         return review.comments
-
-#    def get_permissions(self):
-        # предусмотреть пермишены для модератора, если self.action == retrieve
 
     def preform_create(self, serializer):
         review_id = int(self.kwargs.get('review_id'))
@@ -168,14 +169,12 @@ class CommentViewset(viewsets.ModelViewSet):
 
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (IsAdminUserOrReadOnly,)
 
     def get_queryset(self):
         title_id = int(self.kwargs.get('title_id'))
         title = get_object_or_404(Title, pk=title_id)
         return title.reviews
-
-#    def get_permissions(self):
-        # предусмотреть пермишены для модератора, если self.action == retrieve
 
     def perform_create(self, serializer):
         title_id = int(self.kwargs.get('title_id'))
