@@ -258,5 +258,5 @@ class Comment(models.Model):
     def __str__(self):
         return (
             f'Review: {self.review} | Comment Author:'
-            f' {self.author.username} | {self.text[:10]}'
+            f' {self.author} | {self.text[:10]}'
         )

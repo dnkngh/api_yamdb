@@ -28,7 +28,7 @@ class NotAdminSerializer(serializers.ModelSerializer):
             'bio',
             'role'
         )
-        read_only_fields = ('role')
+        read_only_fields = ('role',)
 
 
 class GetTokenSerializer(serializers.ModelSerializer):
