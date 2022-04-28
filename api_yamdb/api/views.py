@@ -155,6 +155,7 @@ class TitleViewSet(viewsets.ModelViewSet):
             return TitleReadSerializer
         return TitleWriteSerializer
 
+
 class CommentViewset(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (AdminModeratorAuthorPermission,)
@@ -162,14 +163,14 @@ class CommentViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         review_id = int(self.kwargs.get('review_id'))
         review = get_object_or_404(Review, pk=review_id)
-        return review.comments
+        return review.comments.all()
 
-
-    def preform_create(self, serializer):
-        review_id = int(self.kwargs.get('review_id'))
-        review = get_object_or_404(Review, pk=review_id)
-        user = self.request.user
-        serializer.save(author=user, review=review)
+    def perform_create(self, serializer):
+        review = get_object_or_404(
+            Review,
+            id=self.kwargs.get('review_id')
+        )
+        serializer.save(author=self.request.user, review=review)
 
 
 class ReviewViewset(viewsets.ModelViewSet):
@@ -181,9 +182,9 @@ class ReviewViewset(viewsets.ModelViewSet):
         title = get_object_or_404(Title, pk=title_id)
         return title.reviews.all()
 
-
     def perform_create(self, serializer):
-        title_id = int(self.kwargs.get('title_id'))
-        title = get_object_or_404(Title, pk=title_id)
-        user = self.request.user
-        serializer.save(author=user, title=title)
+        title = get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id')
+        )
+        serializer.save(author=self.request.user, title=title)
