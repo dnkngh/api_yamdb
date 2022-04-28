@@ -1,4 +1,5 @@
 from django.core.mail import EmailMessage
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets, filters
@@ -145,7 +146,9 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().order_by("name")
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')
+    ).all()
     permission_classes = (IsAdminUserOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
     filterset_class = TitlesFilter

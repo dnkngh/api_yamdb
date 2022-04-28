@@ -158,11 +158,6 @@ class Title(models.Model):
         related_name='titles',
         null=True
     )
-    rating = models.IntegerField(
-        verbose_name='Рейтинг',
-        null=True,
-        default=None
-    )
 
     def __str__(self):
         return self.name
@@ -206,9 +201,9 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Автор отзыва.'
     )
-    score = models.PositiveSmallIntegerField(
+    score = models.IntegerField(
         validators=(
-            MinValueValidator(0),
+            MinValueValidator(1),
             MaxValueValidator(10)
         ),
         error_messages={
