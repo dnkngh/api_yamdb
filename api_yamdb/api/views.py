@@ -64,7 +64,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 class APIGetToken(APIView):
     """
     Получение JWT-токена.
-    Права доступа: Доступно без токена. Пример запроса:
+    Права доступа: доступно без токена. Пример запроса:
     {
         "username": "string",
         "confirmation_code": "string"
