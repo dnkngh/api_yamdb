@@ -169,50 +169,50 @@ Method:POST `/api/v1/categories/`
 ### Удаление категории:
 - Права доступа: Администратор
 
-Method:DELETE `/api/v1/categories/{slug}`
+Method:DELETE `/api/v1/categories/{slug}/`
 
 ## Примеры работы с моделями Genres(Жанры)
 ### Получение списка всех жанров:
 - Права доступа: Любой пользователь
 
-Method:GET `/api/v1/genres`
+Method:GET `/api/v1/genres/`
 
 ### Добавление жанра:
 - Права доступа: Администратор
 
-Method:POST `/api/v1/genres`
+Method:POST `/api/v1/genres/`
 
 ### Удаление жанра:
 - Права доступа: Администратор
 
-Method:DELETE `/api/v1/genres{slug}`
+Method:DELETE `/api/v1/genres{slug}/`
 
 ## Примеры работы с моделями Titles(Произведения)
 
 ### Получение списка всех произведений:
 - Права доступа: Любой пользователь
 
-Method:GET `/api/v1/titles`
+Method:GET `/api/v1/titles/`
 
 ### Добавление произведения:
 - Права доступа: Администратор
 
-Method:POST `/api/v1/titles`
+Method:POST `/api/v1/titles/`
 
 ### Получение информации о произведении:
 - Права доступа: Любой пользователь
 
-Method:GET `/api/v1/titles/{titles_id}`
+Method:GET `/api/v1/titles/{titles_id}/`
 
 ### Частичное обновление информации о произведении:
 - Права доступа: Администратор
 
-Method:PATCH `/api/v1/titles/{titles_id}`
+Method:PATCH `/api/v1/titles/{titles_id}/`
 
 ### Удаление произведения:
 - Права доступа: Администратор
 
-Method:DELETE `/api/v1/titles/{titles_id}`
+Method:DELETE `/api/v1/titles/{titles_id}/`
 
 ## Примеры работы с моделями Reviews(Отзывы)
 
