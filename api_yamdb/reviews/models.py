@@ -2,20 +2,18 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .validators import validate_username, validate_year
 
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
 
-ROLE_CHOICES = [
-    (USER, USER),
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-]
+class CustomUser(models.TextChoices):
+    """Добавление дополнительных полей."""
+    USER = 'user', _('User')
+    MODERATOR = 'moderator', _('Moderator')
+    ADMIN = 'admin', _('Admin')
 
 
 class User(AbstractUser):
@@ -35,8 +33,8 @@ class User(AbstractUser):
     role = models.CharField(
         'роль',
         max_length=20,
-        choices=ROLE_CHOICES,
-        default=USER,
+        choices=CustomUser.choices,
+        default=CustomUser.USER,
         blank=True
     )
     bio = models.TextField(
@@ -63,15 +61,15 @@ class User(AbstractUser):
 
     @property
     def is_user(self):
-        return self.role == USER
+        return self.role == CustomUser.USER
 
     @property
     def is_admin(self):
-        return self.role == ADMIN
+        return self.is_superuser or self.role == CustomUser.ADMIN
 
     @property
     def is_moderator(self):
-        return self.role == MODERATOR
+        return self.role == CustomUser.MODERATOR
 
     class Meta:
         ordering = ('id',)
