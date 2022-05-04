@@ -136,4 +136,3 @@ class ReviewSerializer(serializers.ModelSerializer):
         if Review.objects.filter(title=title, author=author).exists():
             raise ValidationError('Вы уже написали отзыв на это произведение')
         return data
-
