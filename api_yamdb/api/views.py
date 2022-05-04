@@ -15,7 +15,6 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from reviews.models import Category, Genre, Review, Title, User
-
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (
