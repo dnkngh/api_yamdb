@@ -179,25 +179,25 @@ class Review(models.Model):
         Title,
         on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='Произведение.',
-        help_text='Введите текст отзыва.'
+        verbose_name='Произведение',
+        help_text='Введите текст отзыва'
     )
-    text = models.TextField(max_length=300)
+    text = models.TextField()
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
-        verbose_name='Автор отзыва.'
+        verbose_name='Автор отзыва'
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         validators=(
             MinValueValidator(1),
-            MaxValueValidator(10)
+            MaxValueValidator(10),
         ),
         error_messages={
-            'validator': 'Оценка должна быть в диапазоне от 0 до 10.'
+            'validators': 'Оценка должна быть в диапазоне от 0 до 10.'
         },
-        verbose_name='Оценка произведения.'
+        verbose_name='Оценка произведения'
     )
     pub_date = models.DateTimeField('Дата отзыва', auto_now_add=True)
 
@@ -217,19 +217,18 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments',
         null=False,
-        verbose_name='Отзыв.'
+        verbose_name='Отзыв'
     )
     text = models.TextField(
-        max_length=300,
         null=False,
-        help_text='Введите текст комментария.'
+        help_text='Введите текст комментария'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
         null=False,
-        verbose_name='Автор комментария.',
+        verbose_name='Автор комментария',
     )
     pub_date = models.DateTimeField('Дата комментария', auto_now_add=True)
 
