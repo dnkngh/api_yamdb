@@ -1,19 +1,21 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.tokens import default_token_generator
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from .validators import validate_username, validate_year
 
 
 class CustomUser(models.TextChoices):
     """Добавление дополнительных полей."""
-    USER = 'user', _('User')
-    MODERATOR = 'moderator', _('Moderator')
-    ADMIN = 'admin', _('Admin')
+    USER = 'user'
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+
+    ROLE_CHOICES = [
+        (USER, USER),
+        (ADMIN, ADMIN),
+        (MODERATOR, MODERATOR),
+    ]
 
 
 class User(AbstractUser):
@@ -22,20 +24,20 @@ class User(AbstractUser):
         max_length=150,
         unique=True,
         blank=False,
-        null=False
+        null=False,
     )
     email = models.EmailField(
         max_length=254,
         unique=True,
         blank=False,
-        null=False
+        null=False,
     )
     role = models.CharField(
         'роль',
         max_length=20,
         choices=CustomUser.choices,
         default=CustomUser.USER,
-        blank=True
+        blank=True,
     )
     bio = models.TextField(
         'биография',
@@ -44,20 +46,24 @@ class User(AbstractUser):
     first_name = models.CharField(
         'имя',
         max_length=150,
-        blank=True
+        blank=True,
     )
     last_name = models.CharField(
         'фамилия',
         max_length=150,
-        blank=True
+        blank=True,
     )
     confirmation_code = models.CharField(
         'код подтверждения',
         max_length=255,
         null=True,
         blank=False,
-        default='XXXX'
     )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     @property
     def is_user(self):
@@ -71,23 +77,8 @@ class User(AbstractUser):
     def is_moderator(self):
         return self.role == CustomUser.MODERATOR
 
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
     def __str__(self):
         return self.username
-
-
-@receiver(post_save, sender=User)
-def post_save(sender, instance, created, **kwargs):
-    if created:
-        confirmation_code = default_token_generator.make_token(
-            instance
-        )
-        instance.confirmation_code = confirmation_code
-        instance.save()
 
 
 class Category(models.Model):

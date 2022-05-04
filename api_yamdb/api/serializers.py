@@ -108,7 +108,6 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    
     class Meta:
         model = Comment
         exclude = ('review',)

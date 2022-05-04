@@ -15,23 +15,27 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from reviews.models import Category, Genre, Review, Title, User
+
 from .filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
-from .permissions import AdminOnly, AdminModeratorAuthorPermission, IsAdminUserOrReadOnly
+from .permissions import (
+    AdminOnly,
+    AdminModeratorAuthorPermission,
+    IsAdminUserOrReadOnly,
+)
 from .serializers import (
+    AdminSerializer,
     CategorySerializer,
     CommentSerializer,
     GenreSerializer,
-    TitleWriteSerializer,
-    TitleReadSerializer,
     GetTokenSerializer,
-    AdminSerializer,
-    ReviewSerializer,
     SignUpSerializer,
-    UsersSerializer
+    TitleReadSerializer,
+    TitleWriteSerializer,
+    UsersSerializer,
+    ReviewSerializer,
 )
 from api_yamdb.settings import EMAIL_HOST_USER
-
 
 SUBJECT = 'YaMDb: код подверждения'
 MESSAGE = 'Код подтверждения - {}'
