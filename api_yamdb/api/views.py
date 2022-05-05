@@ -5,9 +5,7 @@ from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets, filters
-from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -15,7 +13,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from reviews.models import Category, Genre, Review, Title, User
-from ..reviews.filters import TitlesFilter
+from reviews.filters import TitlesFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (
     AdminOnly,
@@ -74,12 +72,11 @@ def token(request):
     )
     if not default_token_generator.check_token(
             user,
-            serializer.validated_data['confirmation_code']):
+            serializer.validated_data['confirmation_code'],
+    ):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     token = AccessToken.for_user(user)
-    data = {
-        'token': str(token),
-    }
+    data = {'token': str(token), }
     return Response(data)
 
 
@@ -88,11 +85,11 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = AdminSerializer
     permission_classes = (IsAuthenticated, AdminOnly,)
     lookup_field = 'username'
-    filter_backends = (SearchFilter, )
-    search_fields = ('username', )
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
 
     @action(
-        methods=['GET', 'PATCH'],
+        methods=['GET', 'PATCH', ],
         detail=False,
         permission_classes=(IsAuthenticated,),
         url_path='me',
@@ -104,7 +101,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         serializer = UsersSerializer(
             request.user,
             data=request.data,
-            partial=True
+            partial=True,
         )
         serializer.is_valid(raise_exception=True)
         serializer.save(role=request.user.role)
@@ -134,7 +131,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         rating=Avg('reviews__score')
     ).all()
     permission_classes = (IsAdminUserOrReadOnly,)
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, ]
     filterset_class = TitlesFilter
 
     def get_serializer_class(self):
@@ -150,7 +147,7 @@ class CommentViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         title = get_object_or_404(
             Title,
-            pk=self.kwargs.get('title_id')
+            pk=self.kwargs.get('title_id'),
         )
         review = get_object_or_404(
             Review,
@@ -162,14 +159,14 @@ class CommentViewset(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         title = get_object_or_404(
             Title,
-            id=self.kwargs.get('title_id')
+            id=self.kwargs.get('title_id'),
         )
         review = get_object_or_404(
             Review,
             id=self.kwargs.get('review_id'),
-            title=title
+            title=title,
         )
-        serializer.save(author=self.request.user, review=review,)
+        serializer.save(author=self.request.user, review=review)
 
 
 class ReviewViewset(viewsets.ModelViewSet):
