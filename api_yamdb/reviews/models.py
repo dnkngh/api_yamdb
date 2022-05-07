@@ -63,6 +63,9 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
+    def __str__(self):
+        return self.username
+
     @property
     def is_user(self):
         return self.role == USER
@@ -74,9 +77,6 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == MODERATOR
-
-    def __str__(self):
-        return self.username
 
 
 class Category(models.Model):

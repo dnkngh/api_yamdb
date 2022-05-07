@@ -32,7 +32,7 @@ from .serializers import (
     UsersSerializer,
     ReviewSerializer,
 )
-from api_yamdb.settings import EMAIL_HOST_USER
+from django.conf import settings
 
 SUBJECT = 'YaMDb: код подверждения'
 MESSAGE = 'Код подтверждения - {}'
@@ -55,7 +55,7 @@ def signup(request):
     send_mail(
         SUBJECT,
         MESSAGE.format(confirmation_code),
-        EMAIL_HOST_USER,
+        settings.EMAIL_HOST_USER,
         [user.email],
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
