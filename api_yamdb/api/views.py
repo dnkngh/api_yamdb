@@ -76,7 +76,7 @@ def token(request):
     ):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     token = AccessToken.for_user(user)
-    data = {'token': str(token), }
+    data = {'token': str(token)}
     return Response(data)
 
 
