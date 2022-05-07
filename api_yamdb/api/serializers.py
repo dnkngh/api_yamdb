@@ -127,15 +127,17 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ('author', 'title_id',)
+        read_only_fields = ('author', 'title_id')
 
     def validate(self, data):
         request = self.context['request']
         title_id = request.parser_context['kwargs'].get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         if (
-            Review.objects.filter(title=title, author=request.user).exists()
-            and request.method != 'PATCH'
+            request.method != 'PATCH'
+            and Review.objects.filter(
+                title=title, author=request.user
+            ).exists()
         ):
             raise ValidationError('Вы уже написали отзыв на это произведение')
         return data
