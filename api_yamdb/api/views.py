@@ -45,7 +45,7 @@ def signup(request):
     serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     try:
-        user, created = User.objects.get_or_create(
+        user, _ = User.objects.get_or_create(
             email=serializer.validated_data['email'],
             username=serializer.validated_data['username'],
         )

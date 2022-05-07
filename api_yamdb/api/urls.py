@@ -31,12 +31,12 @@ router.register(
     basename='reviews'
 )
 
-v1_patterns = [
-    path('auth/token/', token, name='get_token'),
-    path('', include(router.urls)),
-    path('auth/signup/', signup, name='signup'),
+v1_auth_patterns = [
+    path('token/', token, name='get_token'),
+    path('signup/', signup, name='signup'),
 ]
 
 urlpatterns = [
-    path('v1/', include(v1_patterns)),
+    path('v1/', include(router.urls)),
+    path('v1/auth/', include(v1_auth_patterns)),
 ]
